@@ -11,12 +11,36 @@ view.clearColor = MTLClearColor(red: 1, green: 1, blue: 0.8, alpha: 1)
 view.device = device
 
 let allocator = MTKMeshBufferAllocator(device: device)
-let mdlMesh = MDLMesh(coneWithExtent: [1, 1, 1],
-                      segments: [10, 10],
-                      inwardNormals: false,
-                      cap: true,
-                      geometryType: .triangles,
-                      allocator: allocator)
+//let mdlMesh = MDLMesh(coneWithExtent: [1, 1, 1],
+//                      segments: [10, 10],
+//                      inwardNormals: false,
+//                      cap: true,
+//                      geometryType: .triangles,
+//                      allocator: allocator)
+
+guard let assetURL = Bundle.main.url(forResource: "train",
+                                     withExtension: "obj") else {
+  fatalError()
+}
+
+// 1
+let vertexDescriptor = MTLVertexDescriptor()
+// 2
+vertexDescriptor.attributes[0].format = .float3
+// 3
+vertexDescriptor.attributes[0].offset = 0
+// 4
+vertexDescriptor.attributes[0].bufferIndex = 0
+
+// 1
+vertexDescriptor.layouts[0].stride = MemoryLayout<SIMD3<Float>>.stride
+// 2
+let meshDescriptor =
+           MTKModelIOVertexDescriptorFromMetal(vertexDescriptor)
+// 3
+(meshDescriptor.attributes[0] as! MDLVertexAttribute).name =
+           MDLVertexAttributePosition
+
 let mesh = try MTKMesh(mesh: mdlMesh, device: device)
 
 guard let commandQueue = device.makeCommandQueue() else {

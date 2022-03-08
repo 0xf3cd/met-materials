@@ -10,11 +10,53 @@ let view = MTKView(frame: frame, device: device)
 view.clearColor = MTLClearColor(red: 1, green: 1, blue: 0.8, alpha: 1)
 
 let allocator = MTKMeshBufferAllocator(device: device)
-let mdlMesh = MDLMesh(sphereWithExtent: [0.75, 0.75, 0.75],
-                      segments: [100, 100],
+//let mdlMesh = MDLMesh(sphereWithExtent: [0.75, 0.75, 0.75],
+//                      segments: [100, 100],
+//                      inwardNormals: false,
+//                      geometryType: .triangles,
+//                      allocator: allocator)
+
+// Create the cone for output to Blender.
+let mdlMesh = MDLMesh(coneWithExtent: [1,1,1],
+                      segments: [10, 10],
                       inwardNormals: false,
+                      cap: true,
                       geometryType: .triangles,
                       allocator: allocator)
+
+print(playgroundSharedDataDirectory)
+func checkFolderExists(_ url: URL) -> Bool {
+    return FileManager.default.fileExists(atPath: url.path)
+}
+// Create the folder if not existing.
+if !checkFolderExists(playgroundSharedDataDirectory) {
+    do {
+        try FileManager.default.createDirectory(at: playgroundSharedDataDirectory, withIntermediateDirectories: false, attributes: nil)
+    } catch {
+        fatalError("Failed to create the shared folder for playground resources.")
+    }
+}
+assert(checkFolderExists(playgroundSharedDataDirectory))
+
+// begin export code
+// 1
+let asset = MDLAsset() // The top level of a scene in Model I/O is an `MDLAsset`.
+asset.add(mdlMesh)
+// 2
+let fileExtension = "obj"
+guard MDLAsset.canExportFileExtension(fileExtension) else {
+  fatalError("Can't export a .\(fileExtension) format")
+}
+// 3
+do {
+  let url = playgroundSharedDataDirectory.appendingPathComponent(
+    "primitive.\(fileExtension)")
+  try asset.export(to: url)
+} catch {
+  fatalError("Error \(error.localizedDescription)")
+}
+// end export code
+
 let mesh = try MTKMesh(mesh: mdlMesh, device: device)
 
 guard let commandQueue = device.makeCommandQueue() else {
@@ -64,6 +106,7 @@ guard let submesh = mesh.submeshes.first else {
   fatalError()
 }
 
+renderEncoder.setTriangleFillMode(.lines)
 renderEncoder.drawIndexedPrimitives(type: .triangle,
                                     indexCount: submesh.indexCount,
                                     indexType: submesh.indexType,
