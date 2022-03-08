@@ -41,6 +41,11 @@ let meshDescriptor =
 (meshDescriptor.attributes[0] as! MDLVertexAttribute).name =
            MDLVertexAttributePosition
 
+let asset = MDLAsset(url: assetURL,
+                     vertexDescriptor: meshDescriptor,
+                     bufferAllocator: allocator)
+let mdlMesh = asset.childObjects(of: MDLMesh.self).first as! MDLMesh
+
 let mesh = try MTKMesh(mesh: mdlMesh, device: device)
 
 guard let commandQueue = device.makeCommandQueue() else {
@@ -88,14 +93,14 @@ renderEncoder.setVertexBuffer(mesh.vertexBuffers[0].buffer,
 
 renderEncoder.setTriangleFillMode(.lines)
 
-guard let submesh = mesh.submeshes.first else {
-  fatalError()
+for submesh in mesh.submeshes {
+    renderEncoder.drawIndexedPrimitives(type: .triangle,
+                                        indexCount: submesh.indexCount,
+                                        indexType: submesh.indexType,
+                                        indexBuffer: submesh.indexBuffer.buffer,
+                                        indexBufferOffset: submesh.indexBuffer.offset)
 }
-renderEncoder.drawIndexedPrimitives(type: .triangle,
-                                    indexCount: submesh.indexCount,
-                                    indexType: submesh.indexType,
-                                    indexBuffer: submesh.indexBuffer.buffer,
-                                    indexBufferOffset: 0)
+
 
 renderEncoder.endEncoding()
 guard let drawable = view.currentDrawable else {
