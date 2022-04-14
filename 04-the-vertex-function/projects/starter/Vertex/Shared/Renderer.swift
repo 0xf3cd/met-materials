@@ -39,6 +39,14 @@ class Renderer: NSObject {
   static var commandQueue: MTLCommandQueue!
   static var library: MTLLibrary!
   var pipelineState: MTLRenderPipelineState!
+  
+  // Quad must be initialized lazily since `Renderer.device` is not initialized at the beginning.
+  lazy var quad: Quad = {
+    Quad(device: Renderer.device, scale: 0.8)
+  }()
+  
+  // This field determines the movement of the shape.
+  var timer: Float = 0
 
   init(metalView: MTKView) {
     guard
@@ -97,9 +105,31 @@ extension Renderer: MTKViewDelegate {
           descriptor: descriptor) else {
         return
     }
+    
+    // Update the timer, and invoke `setVertexBytes` to set the buffer (index 11).
+    // `setVertexBytes` is used to send a small amount of data.
+    timer += 0.005
+    var currentTime = sin(timer)
+    renderEncoder.setVertexBytes(
+      &currentTime,
+      length: MemoryLayout<Float>.stride,
+      index: 11)
+    
     renderEncoder.setRenderPipelineState(pipelineState)
 
     // do drawing here
+    renderEncoder.setVertexBuffer(
+      quad.vertexBuffer,
+      offset: 0,
+      index: 0)
+    renderEncoder.setVertexBuffer(
+      quad.indexBuffer,
+      offset: 0,
+      index: 1)
+    renderEncoder.drawPrimitives(
+      type: .triangle,
+      vertexStart: 0,
+      vertexCount: quad.indices.count)
 
     renderEncoder.endEncoding()
     guard let drawable = view.currentDrawable else {

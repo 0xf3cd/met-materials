@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		231C785128089DC0006F8106 /* Quad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231C785028089DC0006F8106 /* Quad.swift */; };
+		231C785228089DC0006F8106 /* Quad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231C785028089DC0006F8106 /* Quad.swift */; };
 		820EACE5267C1D8600570060 /* VertexApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820EACD7267C1D8500570060 /* VertexApp.swift */; };
 		820EACE6267C1D8600570060 /* VertexApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820EACD7267C1D8500570060 /* VertexApp.swift */; };
 		820EACE7267C1D8600570060 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820EACD8267C1D8500570060 /* ContentView.swift */; };
@@ -22,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		231C785028089DC0006F8106 /* Quad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quad.swift; sourceTree = "<group>"; };
 		820EACD7267C1D8500570060 /* VertexApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VertexApp.swift; sourceTree = "<group>"; };
 		820EACD8267C1D8500570060 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		820EACD9267C1D8600570060 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -64,6 +67,7 @@
 				820EACD7267C1D8500570060 /* VertexApp.swift */,
 				820EACD8267C1D8500570060 /* ContentView.swift */,
 				820EACF6267C262F00570060 /* Renderer.swift */,
+				231C785028089DC0006F8106 /* Quad.swift */,
 				82D99C9F267C79C000505CDB /* MetalView.swift */,
 				8289B17A267C690B0062BFCD /* Shaders.metal */,
 				820EACD9267C1D8600570060 /* Assets.xcassets */,
@@ -219,6 +223,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				231C785128089DC0006F8106 /* Quad.swift in Sources */,
 				8289B17B267C690B0062BFCD /* Shaders.metal in Sources */,
 				820EACF7267C262F00570060 /* Renderer.swift in Sources */,
 				82D99CA0267C79C000505CDB /* MetalView.swift in Sources */,
@@ -231,6 +236,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				231C785228089DC0006F8106 /* Quad.swift in Sources */,
 				8289B17C267C690B0062BFCD /* Shaders.metal in Sources */,
 				820EACF8267C262F00570060 /* Renderer.swift in Sources */,
 				82D99CA1267C79C000505CDB /* MetalView.swift in Sources */,
@@ -360,7 +366,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = FE997W9FK9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "";
@@ -394,7 +400,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = FE997W9FK9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "";
