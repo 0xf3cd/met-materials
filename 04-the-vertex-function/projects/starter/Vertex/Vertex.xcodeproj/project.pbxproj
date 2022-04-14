@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		231C785128089DC0006F8106 /* Quad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231C785028089DC0006F8106 /* Quad.swift */; };
 		231C785228089DC0006F8106 /* Quad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231C785028089DC0006F8106 /* Quad.swift */; };
+		231C78542808B96B006F8106 /* VertexDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231C78532808B96B006F8106 /* VertexDescriptor.swift */; };
+		231C78552808B96B006F8106 /* VertexDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231C78532808B96B006F8106 /* VertexDescriptor.swift */; };
 		820EACE5267C1D8600570060 /* VertexApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820EACD7267C1D8500570060 /* VertexApp.swift */; };
 		820EACE6267C1D8600570060 /* VertexApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820EACD7267C1D8500570060 /* VertexApp.swift */; };
 		820EACE7267C1D8600570060 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820EACD8267C1D8500570060 /* ContentView.swift */; };
@@ -25,6 +27,7 @@
 
 /* Begin PBXFileReference section */
 		231C785028089DC0006F8106 /* Quad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quad.swift; sourceTree = "<group>"; };
+		231C78532808B96B006F8106 /* VertexDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VertexDescriptor.swift; sourceTree = "<group>"; };
 		820EACD7267C1D8500570060 /* VertexApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VertexApp.swift; sourceTree = "<group>"; };
 		820EACD8267C1D8500570060 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		820EACD9267C1D8600570060 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -70,6 +73,7 @@
 				231C785028089DC0006F8106 /* Quad.swift */,
 				82D99C9F267C79C000505CDB /* MetalView.swift */,
 				8289B17A267C690B0062BFCD /* Shaders.metal */,
+				231C78532808B96B006F8106 /* VertexDescriptor.swift */,
 				820EACD9267C1D8600570060 /* Assets.xcassets */,
 			);
 			path = Shared;
@@ -223,6 +227,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				231C78542808B96B006F8106 /* VertexDescriptor.swift in Sources */,
 				231C785128089DC0006F8106 /* Quad.swift in Sources */,
 				8289B17B267C690B0062BFCD /* Shaders.metal in Sources */,
 				820EACF7267C262F00570060 /* Renderer.swift in Sources */,
@@ -236,6 +241,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				231C78552808B96B006F8106 /* VertexDescriptor.swift in Sources */,
 				231C785228089DC0006F8106 /* Quad.swift in Sources */,
 				8289B17C267C690B0062BFCD /* Shaders.metal in Sources */,
 				820EACF8267C262F00570060 /* Renderer.swift in Sources */,
