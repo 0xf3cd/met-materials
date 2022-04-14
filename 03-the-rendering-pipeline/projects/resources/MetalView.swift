@@ -35,9 +35,13 @@ import MetalKit
 
 struct MetalView: View {
   @State private var metalView = MTKView()
+  @State private var renderer: Renderer?
 
   var body: some View {
     MetalViewRepresentable(metalView: $metalView)
+      .onAppear {
+        renderer = Renderer(metalView: metalView)
+      }
   }
 }
 
