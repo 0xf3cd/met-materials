@@ -32,14 +32,12 @@
 
 #include <metal_stdlib>
 using namespace metal;
-#import "Common.h" 
+#import "Common.h"
+#import "ShaderDefs.h"
 
 struct VertexIn {
   float4 position [[attribute(0)]];
-};
-
-struct VertexOut {
-  float4 position [[position]];
+  float3 normal   [[attribute(1)]];
 };
 
 vertex VertexOut vertex_main(
@@ -50,7 +48,8 @@ vertex VertexOut vertex_main(
     uniforms.projectionMatrix * uniforms.viewMatrix
     * uniforms.modelMatrix * in.position;
   VertexOut out {
-    .position = position
+    .position = position,
+    .normal = in.normal
   };
   return out;
 }

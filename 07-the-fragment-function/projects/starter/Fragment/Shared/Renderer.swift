@@ -50,6 +50,16 @@ class Renderer: NSObject {
 
   var timer: Float = 0
   var uniforms = Uniforms()
+  var params = Params()
+  
+  let depthStencilState: MTLDepthStencilState?
+  
+  static func buildDepthStencilState() -> MTLDepthStencilState? {
+    let descriptor = MTLDepthStencilDescriptor()
+    descriptor.depthCompareFunction = .less
+    descriptor.isDepthWriteEnabled = true
+    return Renderer.device.makeDepthStencilState(descriptor: descriptor)
+  }
 
   init(metalView: MTKView, options: Options) {
     guard
@@ -75,6 +85,7 @@ class Renderer: NSObject {
     pipelineDescriptor.fragmentFunction = fragmentFunction
     pipelineDescriptor.colorAttachments[0].pixelFormat =
       metalView.colorPixelFormat
+    pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
     do {
       quadPipelineState =
       try device.makeRenderPipelineState(
@@ -89,12 +100,15 @@ class Renderer: NSObject {
       fatalError(error.localizedDescription)
     }
     self.options = options
+    self.depthStencilState = Renderer.buildDepthStencilState()
+    
     super.init()
     metalView.clearColor = MTLClearColor(
       red: 1.0,
       green: 1.0,
       blue: 0.9,
       alpha: 1.0)
+    metalView.depthStencilPixelFormat = .depth32Float
     metalView.delegate = self
     mtkView(metalView, drawableSizeWillChange: metalView.bounds.size)
   }
@@ -114,6 +128,9 @@ extension Renderer: MTKViewDelegate {
         far: 100,
         aspect: aspect)
     uniforms.projectionMatrix = projectionMatrix
+    
+    params.width = UInt32(size.width)
+    params.width = UInt32(size.height)
   }
 
   func renderModel(encoder: MTLRenderCommandEncoder) {
@@ -146,6 +163,13 @@ extension Renderer: MTKViewDelegate {
           descriptor: descriptor) else {
         return
     }
+    
+    renderEncoder.setDepthStencilState(depthStencilState)
+    
+    renderEncoder.setFragmentBytes(
+      &params,
+      length: MemoryLayout<Params>.stride,
+      index: 12)
 
     if options.renderChoice == .train {
       renderModel(encoder: renderEncoder)

@@ -37,5 +37,5 @@ enum RenderChoice {
 }
 
 class Options: ObservableObject {
-  @Published var renderChoice = RenderChoice.quad
+  @Published var renderChoice = RenderChoice.train
 }

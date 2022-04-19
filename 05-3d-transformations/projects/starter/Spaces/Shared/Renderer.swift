@@ -114,10 +114,15 @@ extension Renderer: MTKViewDelegate {
       &color,
       length: MemoryLayout<SIMD4<Float>>.stride,
       index: 0)
-    var position = simd_float3(0, 0, 0)
+    var translation = matrix_float4x4()
+    translation.columns.0 = [1, 0, 0, 0]
+    translation.columns.1 = [0, 1, 0, 0]
+    translation.columns.2 = [0, 0, 1, 0]
+    translation.columns.3 = [0, 0, 0, 1]
+    var matrix = translation
     renderEncoder.setVertexBytes(
-      &position,
-      length: MemoryLayout<SIMD3<Float>>.stride,
+      &matrix,
+      length: MemoryLayout<matrix_float4x4>.stride,
       index: 11)
     renderEncoder.drawIndexedPrimitives(
       type: .triangle,
@@ -132,10 +137,34 @@ extension Renderer: MTKViewDelegate {
       &color,
       length: MemoryLayout<SIMD4<Float>>.stride,
       index: 0)
-    position = simd_float3(0.3, -0.4, 0)
+    
+    // The left-upper 3x3 sub-matrix determines the rotation and scale.
+    // The rest of the 4x4 matrix is used to specify the translation.
+    
+    let position = simd_float3(0.3, -0.4, 0)
+    translation.columns.3.x = position.x
+    translation.columns.3.y = position.y
+    translation.columns.3.z = position.z
+    
+    let scaleX: Float = 1.2
+    let scaleY: Float = 0.5
+    let scaleMatrix = float4x4(
+      [scaleX, 0, 0, 0],
+      [0, scaleY, 0, 0],
+      [0,      0, 1, 0],
+      [0,      0, 0, 1])
+    
+    let angle = Float.pi / 2.0
+    let rotationMatrix = float4x4(
+      [cos(angle), -sin(angle), 0,    0],
+      [sin(angle),  cos(angle), 0,    0],
+      [0,           0,          1,    0],
+      [0,           0,          0,    1])
+    
+    matrix = translation * rotationMatrix * scaleMatrix
     renderEncoder.setVertexBytes(
-      &position,
-      length: MemoryLayout<SIMD3<Float>>.stride,
+      &matrix,
+      length: MemoryLayout<matrix_float4x4>.stride,
       index: 11)
     renderEncoder.drawIndexedPrimitives(
       type: .triangle,
