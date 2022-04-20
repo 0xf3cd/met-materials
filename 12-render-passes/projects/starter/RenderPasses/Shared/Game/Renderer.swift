@@ -44,6 +44,7 @@ class Renderer: NSObject {
   var params = Params()
 
   var forwardRenderPass: ForwardRenderPass
+  var objectIdRenderPass: ObjectIdRenderPass
 
   init(metalView: MTKView, options: Options) {
     guard
@@ -60,6 +61,7 @@ class Renderer: NSObject {
     Self.library = library
     self.options = options
     forwardRenderPass = ForwardRenderPass(view: metalView)
+    objectIdRenderPass = ObjectIdRenderPass()
     super.init()
     metalView.clearColor = MTLClearColor(
       red: 0.93,
@@ -77,6 +79,7 @@ extension Renderer {
     drawableSizeWillChange size: CGSize
   ) {
     forwardRenderPass.resize(view: view, size: size)
+    objectIdRenderPass.resize(view: view, size: size)
   }
 
   func updateUniforms(scene: GameScene) {
@@ -101,6 +104,14 @@ extension Renderer {
       scene: scene,
       uniforms: uniforms,
       params: params)
+    
+    objectIdRenderPass.draw(
+      commandBuffer: commandBuffer,
+      scene: scene,
+      uniforms: uniforms,
+      params: params)
+    
+    forwardRenderPass.idTexture = objectIdRenderPass.idTexture
 
     guard let drawable = view.currentDrawable else {
       return
