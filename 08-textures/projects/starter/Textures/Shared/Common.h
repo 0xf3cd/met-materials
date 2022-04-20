@@ -45,6 +45,7 @@ typedef struct {
 typedef struct {
   uint width;
   uint height;
+  uint tiling;
 } Params;
 
 typedef enum {
@@ -52,6 +53,10 @@ typedef enum {
   Normal = 1,
   UV = 2
 } Attributes;
+
+typedef enum {
+  BaseColor = 0
+} TextureIndices;
 
 typedef enum {
   VertexBuffer = 0,

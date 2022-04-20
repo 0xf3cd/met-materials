@@ -39,6 +39,8 @@ class Model: Transformable {
   var transform = Transform()
   let meshes: [Mesh]
   let name: String
+  
+  var tiling: UInt32 = 1
 
   init(name: String) {
     guard let assetURL = Bundle.main.url(
@@ -71,6 +73,8 @@ extension Model {
   ) {
     var uniforms = vertex
     var params = fragment
+    
+    params.tiling = tiling
 
     uniforms.modelMatrix = transform.modelMatrix
 
@@ -95,6 +99,9 @@ extension Model {
       for submesh in mesh.submeshes {
 
         // set the fragment texture here
+        encoder.setFragmentTexture(
+          submesh.textures.baseColor,
+          index: BaseColor.index)
 
         encoder.drawIndexedPrimitives(
           type: .triangle,

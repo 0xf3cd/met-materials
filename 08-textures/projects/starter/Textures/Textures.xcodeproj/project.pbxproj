@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		231C7858280F7556006F8106 /* TextureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231C7857280F7556006F8106 /* TextureController.swift */; };
+		231C7859280F7556006F8106 /* TextureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231C7857280F7556006F8106 /* TextureController.swift */; };
 		82044E4026C8B6B5008347C1 /* lowpoly-house-color.png in Resources */ = {isa = PBXBuildFile; fileRef = 82044E3D26C8B6B5008347C1 /* lowpoly-house-color.png */; };
 		82044E4126C8B6B5008347C1 /* lowpoly-house-color.png in Resources */ = {isa = PBXBuildFile; fileRef = 82044E3D26C8B6B5008347C1 /* lowpoly-house-color.png */; };
 		82044E4226C8B6B5008347C1 /* lowpoly-house.mtl in Resources */ = {isa = PBXBuildFile; fileRef = 82044E3E26C8B6B5008347C1 /* lowpoly-house.mtl */; };
@@ -52,6 +54,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		231C7857280F7556006F8106 /* TextureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureController.swift; sourceTree = "<group>"; };
 		82044E3D26C8B6B5008347C1 /* lowpoly-house-color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "lowpoly-house-color.png"; sourceTree = "<group>"; };
 		82044E3E26C8B6B5008347C1 /* lowpoly-house.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "lowpoly-house.mtl"; sourceTree = "<group>"; };
 		82044E3F26C8B6B5008347C1 /* lowpoly-house.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "lowpoly-house.obj"; sourceTree = "<group>"; };
@@ -119,6 +122,7 @@
 			children = (
 				820B880526B8E47D0070A134 /* TexturesApp.swift */,
 				820B882626B8E50F0070A134 /* Renderer.swift */,
+				231C7857280F7556006F8106 /* TextureController.swift */,
 				820B882926B8E51B0070A134 /* Model.swift */,
 				822D02AA273652B100296BE0 /* Transform.swift */,
 				8224335326CB7C6A00F627C5 /* Mesh.swift */,
@@ -356,6 +360,7 @@
 				820B881526B8E47E0070A134 /* ContentView.swift in Sources */,
 				82044E4726C8BA80008347C1 /* Options.swift in Sources */,
 				822D02AB273652B100296BE0 /* Transform.swift in Sources */,
+				231C7858280F7556006F8106 /* TextureController.swift in Sources */,
 				820B881326B8E47E0070A134 /* TexturesApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -375,6 +380,7 @@
 				820B881626B8E47E0070A134 /* ContentView.swift in Sources */,
 				82044E4826C8BA80008347C1 /* Options.swift in Sources */,
 				822D02AC273652B100296BE0 /* Transform.swift in Sources */,
+				231C7859280F7556006F8106 /* TextureController.swift in Sources */,
 				820B881426B8E47E0070A134 /* TexturesApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

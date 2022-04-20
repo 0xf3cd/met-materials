@@ -51,6 +51,12 @@ class Renderer: NSObject {
   lazy var house: Model = {
     Model(name: "lowpoly-house.obj")
   }()
+  
+  lazy var ground: Model = {
+    var ground = Model(name: "plane.obj")
+    ground.tiling = 16
+    return ground
+  }()
 
   init(metalView: MTKView, options: Options) {
     guard
@@ -144,6 +150,13 @@ extension Renderer: MTKViewDelegate {
 
     house.rotation.y = sin(timer)
     house.render(encoder: renderEncoder, uniforms: uniforms, params: params)
+    
+    ground.scale = 40
+    ground.rotation.y = sin(timer)
+    ground.render(
+      encoder: renderEncoder,
+      uniforms: uniforms,
+      params: params)
 
     renderEncoder.endEncoding()
     guard let drawable = view.currentDrawable else {
