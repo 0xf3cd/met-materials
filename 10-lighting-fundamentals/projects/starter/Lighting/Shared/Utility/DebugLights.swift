@@ -32,7 +32,6 @@
 
 import MetalKit
 
-/*
 enum DebugLights {
   static let linePipelineState: MTLRenderPipelineState = {
     let library = Renderer.library
@@ -210,4 +209,3 @@ enum DebugLights {
       vertexCount: 1)
   }
 }
-*/

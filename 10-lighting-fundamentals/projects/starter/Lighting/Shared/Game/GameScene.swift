@@ -47,6 +47,8 @@ struct GameScene {
       position: [-1.18, 1.57, -1.28],
       rotation: [-0.73, 13.3, 0.0])
   }
+  
+  let lighting = SceneLighting()
 
   init() {
     camera.distance = 2.5

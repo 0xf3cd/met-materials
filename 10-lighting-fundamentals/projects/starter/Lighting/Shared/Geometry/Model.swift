@@ -72,6 +72,7 @@ extension Model {
   ) {
     var uniforms = vertex
     uniforms.modelMatrix = transform.modelMatrix
+    uniforms.normalMatrix = uniforms.modelMatrix.upperLeft
 
     var params = fragment
     params.tiling = tiling
