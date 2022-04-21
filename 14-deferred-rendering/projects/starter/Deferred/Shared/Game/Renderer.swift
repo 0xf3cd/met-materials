@@ -46,6 +46,8 @@ class Renderer: NSObject {
   var forwardRenderPass: ForwardRenderPass
   var shadowRenderPass: ShadowRenderPass
   var gBufferRenderPass: GBufferRenderPass
+  var lightingRenderPass: LightingRenderPass
+  
   var shadowCamera = OrthographicCamera()
 
   init(metalView: MTKView, options: Options) {
@@ -65,6 +67,7 @@ class Renderer: NSObject {
     forwardRenderPass = ForwardRenderPass(view: metalView)
     shadowRenderPass = ShadowRenderPass(view: metalView)
     gBufferRenderPass = GBufferRenderPass(view: metalView)
+    lightingRenderPass = LightingRenderPass(view: metalView)
     super.init()
     metalView.clearColor = MTLClearColor(
       red: 0.93,
@@ -84,6 +87,7 @@ extension Renderer {
     forwardRenderPass.resize(view: view, size: size)
     shadowRenderPass.resize(view: view, size: size)
     gBufferRenderPass.resize(view: view, size: size)
+    lightingRenderPass.resize(view: view, size: size)
   }
 
   func updateUniforms(scene: GameScene) {
@@ -118,9 +122,19 @@ extension Renderer {
       params: params)
 
     if options.renderChoice == .deferred {
-      gBufferRenderPass.descriptor = descriptor
+      // gBufferRenderPass.descriptor = descriptor
       gBufferRenderPass.shadowTexture = shadowRenderPass.shadowTexture
       gBufferRenderPass.draw(
+        commandBuffer: commandBuffer,
+        scene: scene,
+        uniforms: uniforms,
+        params: params)
+      
+      lightingRenderPass.albedoTexture = gBufferRenderPass.albedoTexture
+      lightingRenderPass.normalTexture = gBufferRenderPass.normalTexture
+      lightingRenderPass.positionTexture = gBufferRenderPass.positionTexture
+      lightingRenderPass.descriptor = descriptor
+      lightingRenderPass.draw(
         commandBuffer: commandBuffer,
         scene: scene,
         uniforms: uniforms,
