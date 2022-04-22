@@ -43,6 +43,21 @@ struct GBufferRenderPass: RenderPass {
   var normalTexture: MTLTexture?
   var positionTexture: MTLTexture?
   var depthTexture: MTLTexture?
+    
+  static func buildDepthStencilState() -> MTLDepthStencilState? {
+      let descriptor = MTLDepthStencilDescriptor()
+      descriptor.depthCompareFunction = .less
+      descriptor.isDepthWriteEnabled = true
+      
+      let frontFaceStencil = MTLStencilDescriptor()
+      frontFaceStencil.stencilCompareFunction = .always
+      frontFaceStencil.stencilFailureOperation = .keep
+      frontFaceStencil.depthFailureOperation = .keep
+      frontFaceStencil.depthStencilPassOperation = .incrementClamp
+      descriptor.frontFaceStencil = frontFaceStencil
+      
+      return Renderer.device.makeDepthStencilState(descriptor: descriptor)
+  }
 
   init(view: MTKView) {
     pipelineState = PipelineStates.createGBufferPSO(
@@ -66,8 +81,8 @@ struct GBufferRenderPass: RenderPass {
       label: "Position Texture")
     depthTexture = Self.makeTexture(
       size: size,
-      pixelFormat: .depth32Float,
-      label: "Depth Texture")
+      pixelFormat: .depth32Float_stencil8,
+      label: "Depth and Stencil Texture")
   }
 
   func draw(
@@ -92,6 +107,8 @@ struct GBufferRenderPass: RenderPass {
     }
     descriptor?.depthAttachment.texture = depthTexture
     descriptor?.depthAttachment.storeAction = .dontCare
+    descriptor?.stencilAttachment.texture = depthTexture
+      descriptor?.stencilAttachment.storeAction = .store
 
     guard let descriptor = descriptor,
     let renderEncoder =

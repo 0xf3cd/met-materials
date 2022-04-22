@@ -42,6 +42,8 @@ struct LightingRenderPass: RenderPass {
   weak var normalTexture: MTLTexture?
   weak var positionTexture: MTLTexture?
   var icosphere = Model(name: "icosphere.obj")
+    
+  weak var stencilTexture: MTLTexture?
 
   init(view: MTKView) {
     sunLightPSO = PipelineStates.createSunLightPSO(
@@ -54,6 +56,14 @@ struct LightingRenderPass: RenderPass {
   static func buildDepthStencilState() -> MTLDepthStencilState? {
     let descriptor = MTLDepthStencilDescriptor()
     descriptor.isDepthWriteEnabled = false
+    
+    let frontFaceStencil = MTLStencilDescriptor()
+    frontFaceStencil.stencilCompareFunction = .notEqual
+    frontFaceStencil.stencilFailureOperation = .keep
+    frontFaceStencil.depthFailureOperation = .keep
+    frontFaceStencil.depthStencilPassOperation = .keep
+    descriptor.frontFaceStencil = frontFaceStencil
+    
     return Renderer.device.makeDepthStencilState(descriptor: descriptor)
   }
 
@@ -122,6 +132,10 @@ struct LightingRenderPass: RenderPass {
     uniforms: Uniforms,
     params: Params
   ) {
+    descriptor?.depthAttachment.texture = stencilTexture
+    descriptor?.stencilAttachment.loadAction = .load
+    descriptor?.depthAttachment.loadAction = .dontCare
+    descriptor?.stencilAttachment.texture = stencilTexture
     guard let descriptor = descriptor,
       let renderEncoder =
         commandBuffer.makeRenderCommandEncoder(
