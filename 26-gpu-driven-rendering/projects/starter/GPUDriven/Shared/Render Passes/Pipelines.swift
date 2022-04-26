@@ -89,6 +89,7 @@ enum PipelineStates {
     pipelineDescriptor.vertexDescriptor =
       MTLVertexDescriptor.defaultLayout
     pipelineDescriptor.sampleCount = 4
+    pipelineDescriptor.supportIndirectCommandBuffers = true
     return createPSO(descriptor: pipelineDescriptor)
   }
 }

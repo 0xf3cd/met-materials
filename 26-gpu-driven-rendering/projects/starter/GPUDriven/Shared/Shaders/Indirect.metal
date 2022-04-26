@@ -43,17 +43,22 @@ struct VertexIn {
 struct VertexOut {
   float4 position [[position]];
   float2 uv;
+  uint modelIndex [[flat]];
 };
 
 vertex VertexOut vertex_indirect(
   const VertexIn in [[stage_in]],
-  constant Uniforms &uniforms [[buffer(UniformsBuffer)]])
-{
+  constant Uniforms &uniforms [[buffer(UniformsBuffer)]],
+  constant ModelParams *modelParams [[buffer(ModelParamsBuffer)]],
+  uint modelIndex [[base_instance]]
+) {
+  ModelParams model = modelParams[modelIndex];
   float4 position = in.position;
   VertexOut out {
     .position = uniforms.projectionMatrix * uniforms.viewMatrix
-                  * uniforms.modelMatrix * position,
+                  * model.modelMatrix * position,
     .uv = in.uv,
+    .modelIndex = modelIndex,
   };
   return out;
 }
@@ -64,10 +69,12 @@ struct ShaderMaterial {
 };
 
 fragment float4 fragment_indirect(
-  constant Params &params [[buffer(ParamsBuffer)]],
   VertexOut in [[stage_in]],
-  constant ShaderMaterial &shaderMaterial [[buffer(MaterialBuffer)]])
-{
+  constant ShaderMaterial &shaderMaterial [[buffer(MaterialBuffer)]],
+  constant ModelParams *modelParams [[buffer(ModelParamsBuffer)]]
+) {
+  ModelParams model = modelParams[in.modelIndex];
+  
   constexpr sampler textureSampler(
     filter::linear,
     address::repeat,
@@ -79,7 +86,7 @@ fragment float4 fragment_indirect(
   if (!is_null_texture(baseColorTexture)) {
     material.baseColor = baseColorTexture.sample(
     textureSampler,
-    in.uv * params.tiling).rgb;
+    in.uv * model.tiling).rgb;
   }
   return float4(material.baseColor, 1);
 }

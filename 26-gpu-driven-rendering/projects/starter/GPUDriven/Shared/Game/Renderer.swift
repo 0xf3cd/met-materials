@@ -84,6 +84,8 @@ class Renderer: NSObject {
         return mesh
       }
     }
+    
+    indirectRenderPass.initialize(models: scene.models)
   }
 }
 
