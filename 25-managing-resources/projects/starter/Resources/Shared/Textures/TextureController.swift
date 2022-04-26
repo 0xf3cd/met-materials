@@ -36,7 +36,7 @@ import MetalKit
 enum TextureController {
   static var textureIndex: [String: Int] = [:]
   static var textures: [MTLTexture] = []
-
+  
   static func texture(filename: String) -> Int? {
     if let index = textureIndex[filename] {
       return index
@@ -46,6 +46,70 @@ enum TextureController {
       return store(texture: texture, name: filename)
     }
     return nil
+  }
+  
+  static var heap: MTLHeap?
+
+  static func buildHeap() -> MTLHeap? {
+    let heapDescriptor = MTLHeapDescriptor()
+    
+    let descriptors = textures.map { texture in
+      texture.descriptor
+    }
+    let sizeAndAligns = descriptors.map { descriptor in Renderer.device.heapTextureSizeAndAlign(descriptor: descriptor)
+    }
+    heapDescriptor.size = sizeAndAligns.reduce(0) { total, sizeAndAlign in
+      let size = sizeAndAlign.size
+      let align = sizeAndAlign.align
+      return total + size - (size & (align - 1)) + align
+    }
+    if heapDescriptor.size == 0 {
+      return nil
+    }
+    
+    guard let heap = Renderer.device.makeHeap(descriptor: heapDescriptor) // Time-consuming
+    else { return nil }
+    
+    let heapTextures = descriptors.map { descriptor -> MTLTexture in
+      descriptor.storageMode = heapDescriptor.storageMode
+      descriptor.cpuCacheMode = heapDescriptor.cpuCacheMode
+      guard let texture = heap.makeTexture(descriptor: descriptor)
+      else {
+        fatalError("Failed to create heap textures")
+      }
+      return texture
+    }
+    
+    guard let commandBuffer = Renderer.commandQueue.makeCommandBuffer(),
+          let blitEncoder = commandBuffer.makeBlitCommandEncoder()
+    else { return nil }
+    zip (textures, heapTextures).forEach { texture, heapTexture in
+      heapTexture.label = texture.label
+      var region =
+        MTLRegionMake2D(0, 0, texture.width, texture.height)
+      for level in 0..<texture.mipmapLevelCount {
+        for slice in 0..<texture.arrayLength {
+          blitEncoder.copy(
+            from: texture,
+            sourceSlice: slice,
+            sourceLevel: level,
+            sourceOrigin: region.origin,
+            sourceSize: region.size,
+            to: heapTexture,
+            destinationSlice: slice,
+            destinationLevel: level,
+            destinationOrigin: region.origin)
+        }
+        region.size.width /= 2
+        region.size.height /= 2
+      }
+    }
+    
+    blitEncoder.endEncoding()
+    commandBuffer.commit()
+    Self.textures = heapTextures    
+
+    return heap
   }
 
   // load from USDZ file

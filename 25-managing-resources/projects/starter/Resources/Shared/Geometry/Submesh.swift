@@ -37,6 +37,8 @@ struct Submesh {
   let indexType: MTLIndexType
   let indexBuffer: MTLBuffer
   let indexBufferOffset: Int
+  
+  var materialsBuffer: MTLBuffer!
 
   struct Textures {
     let baseColor: Int?
@@ -61,6 +63,26 @@ struct Submesh {
       TextureController.getTexture(textures.ambientOcclusion),
       TextureController.getTexture(textures.opacity)
     ]}
+  
+  mutating func initializeMaterials() {
+    guard let fragment = Renderer.library.makeFunction(name: "fragment_PBR")
+    else {
+      fatalError("Fragment function does not exist")
+    }
+    let materialEncoder = fragment.makeArgumentEncoder(bufferIndex: MaterialBuffer.index)
+    materialsBuffer = Renderer.device.makeBuffer(
+      length: materialEncoder.encodedLength,
+      options: [])
+    
+    materialEncoder.setArgumentBuffer(materialsBuffer, offset: 0)
+    let range = Range(BaseColor.index...OpacityTexture.index)
+    materialEncoder.setTextures(allTextures, range: range)
+    let index = OpacityTexture.index + 1
+    let address = materialEncoder.constantData(at: index)
+    address.copyMemory(
+      from: &material,
+      byteCount: MemoryLayout<Material>.stride)
+  }
 }
 
 extension Submesh {
@@ -71,6 +93,8 @@ extension Submesh {
     indexBufferOffset = mtkSubmesh.indexBuffer.offset
     textures = Textures(material: mdlSubmesh.material)
     material = Material(material: mdlSubmesh.material)
+  
+    // initializeMaterials()
   }
 }
 

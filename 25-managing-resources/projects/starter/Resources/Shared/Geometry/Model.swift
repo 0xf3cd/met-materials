@@ -172,9 +172,20 @@ class Model: Transformable {
         if submesh.transparency != params.transparency { continue }
 
         if renderState != .shadowPass {
-          updateFragmentMaterials(
+          /* updateFragmentMaterials(
             encoder: encoder,
-            submesh: submesh)
+            submesh: submesh) */
+          encoder.setFragmentBuffer(
+            submesh.materialsBuffer,
+            offset: 0,
+            index: MaterialBuffer.index)
+          // Instead of encoding all the textures, simply send the single argument buffer to the GPU.
+          
+          /* submesh.allTextures.forEach { texture in
+            if let texture = texture {
+              encoder.useResource(texture, usage: .read)
+            }
+          } */
         }
 
         encoder.drawIndexedPrimitives(

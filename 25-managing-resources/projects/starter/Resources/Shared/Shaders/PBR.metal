@@ -35,6 +35,7 @@ using namespace metal;
 
 #import "Vertex.h"
 #import "Lighting.h"
+#import "Material.h"
 
 constant float pi = 3.1415926535897932384626433832795;
 
@@ -55,13 +56,7 @@ fragment float4 fragment_PBR(
   FragmentIn in [[stage_in]],
   constant Params &params [[buffer(ParamsBuffer)]],
   constant Light *lights [[buffer(LightBuffer)]],
-  constant Material &_material [[buffer(MaterialBuffer)]],
-  texture2d<float> baseColorTexture [[texture(BaseColor)]],
-  texture2d<float> normalTexture [[texture(NormalTexture)]],
-  texture2d<float> roughnessTexture [[texture(RoughnessTexture)]],
-  texture2d<float> metallicTexture [[texture(MetallicTexture)]],
-  texture2d<float> aoTexture [[texture(AOTexture)]],
-  texture2d<float> opacityTexture [[texture(OpacityTexture)]],
+  constant ShaderMaterial &shaderMaterial [[buffer(MaterialBuffer)]],
   depth2d<float> shadowTexture [[texture(ShadowTexture)]])
 {
   constexpr sampler textureSampler(
@@ -69,7 +64,13 @@ fragment float4 fragment_PBR(
     address::repeat,
     mip_filter::linear);
   
-  Material material = _material;
+  Material material = shaderMaterial.material;
+  texture2d<float> baseColorTexture = shaderMaterial.baseColorTexture;
+  texture2d<float> normalTexture = shaderMaterial.normalTexture;
+  texture2d<float> metallicTexture = shaderMaterial.metallicTexture;
+  texture2d<float> roughnessTexture = shaderMaterial.roughnessTexture;
+  texture2d<float> aoTexture = shaderMaterial.aoTexture;
+  texture2d<float> opacityTexture = shaderMaterial.opacityTexture;
   
   float opacity = material.opacity;
   if (!is_null_texture(opacityTexture)) {

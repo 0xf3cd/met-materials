@@ -114,6 +114,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		23C6123028174D6100CA4274 /* Material.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Material.h; sourceTree = "<group>"; };
 		82044E4626C8BA80008347C1 /* Options.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Options.swift; sourceTree = "<group>"; };
 		820B880526B8E47D0070A134 /* ResourcesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcesApp.swift; sourceTree = "<group>"; };
 		820B880626B8E47D0070A134 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -347,6 +348,7 @@
 				82B6707E274771A80085AD26 /* PBR.metal */,
 				824EE082277F091B004D64C1 /* Shadow.metal */,
 				82F9D28727991E4E0088E644 /* stdbool.h */,
+				23C6123028174D6100CA4274 /* Material.h */,
 			);
 			path = Shaders;
 			sourceTree = "<group>";

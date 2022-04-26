@@ -44,6 +44,7 @@ class GameController: NSObject {
     Self.fps = Double(metalView.preferredFramesPerSecond)
     renderer = Renderer(metalView: metalView, options: options)
     scene = GameScene()
+    renderer.initialize(scene)
     super.init()
     self.options = options
     metalView.delegate = self

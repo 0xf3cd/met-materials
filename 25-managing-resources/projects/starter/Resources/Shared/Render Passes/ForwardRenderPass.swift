@@ -63,6 +63,11 @@ struct ForwardRenderPass: RenderPass {
         descriptor: descriptor) else {
       return
     }
+    
+    if let heap = TextureController.heap {
+      renderEncoder.useHeap(heap)
+    }
+    
     renderEncoder.label = label
     renderEncoder.setDepthStencilState(depthStencilState)
     renderEncoder.setRenderPipelineState(pipelineState)

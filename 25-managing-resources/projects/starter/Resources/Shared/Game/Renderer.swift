@@ -51,6 +51,21 @@ class Renderer: NSObject {
   var forwardRenderPass: ForwardRenderPass
   var shadowRenderPass: ShadowRenderPass
   var shadowCamera = OrthographicCamera()
+  
+  func initialize(_ scene: GameScene) {
+    TextureController.heap = TextureController.buildHeap()
+    for model in scene.models {
+      model.meshes = model.meshes.map { mesh in
+        var mesh = mesh
+        mesh.submeshes = mesh.submeshes.map { submesh in
+          var submesh = submesh
+          submesh.initializeMaterials()
+          return submesh
+        }
+        return mesh
+      }
+    }
+  }
 
   init(metalView: MTKView, options: Options) {
     guard
