@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		23C6123228189F6200CA4274 /* ICB.metal in Sources */ = {isa = PBXBuildFile; fileRef = 23C6123128189F6200CA4274 /* ICB.metal */; };
+		23C6123328189F6200CA4274 /* ICB.metal in Sources */ = {isa = PBXBuildFile; fileRef = 23C6123128189F6200CA4274 /* ICB.metal */; };
 		82044E4726C8BA80008347C1 /* Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82044E4626C8BA80008347C1 /* Options.swift */; };
 		82044E4826C8BA80008347C1 /* Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82044E4626C8BA80008347C1 /* Options.swift */; };
 		820B881326B8E47E0070A134 /* GPUDrivenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820B880526B8E47D0070A134 /* GPUDrivenApp.swift */; };
@@ -72,6 +74,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		23C6123128189F6200CA4274 /* ICB.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ICB.metal; sourceTree = "<group>"; };
 		82044E4626C8BA80008347C1 /* Options.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Options.swift; sourceTree = "<group>"; };
 		820B880526B8E47D0070A134 /* GPUDrivenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPUDrivenApp.swift; sourceTree = "<group>"; };
 		820B880626B8E47D0070A134 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -246,6 +249,7 @@
 				820B884026B90B770070A134 /* Common.h */,
 				820B883D26B90B530070A134 /* Shaders.metal */,
 				82F4AE2327C247240008F04A /* Indirect.metal */,
+				23C6123128189F6200CA4274 /* ICB.metal */,
 			);
 			path = Shaders;
 			sourceTree = "<group>";
@@ -423,6 +427,7 @@
 				82F4AE2427C247410008F04A /* Indirect.metal in Sources */,
 				82F19C5D273DEE8B001C5657 /* GameController.swift in Sources */,
 				82B8FAA527797E2F00DDACCC /* ForwardRenderPass.swift in Sources */,
+				23C6123228189F6200CA4274 /* ICB.metal in Sources */,
 				822756DF27C227DC00660C7E /* IndirectRenderPass.swift in Sources */,
 				820B882D26B8E5290070A134 /* VertexDescriptor.swift in Sources */,
 				820B882A26B8E51B0070A134 /* Model.swift in Sources */,
@@ -455,6 +460,7 @@
 				82F4AE2527C247420008F04A /* Indirect.metal in Sources */,
 				82F19C5E273DEE8B001C5657 /* GameController.swift in Sources */,
 				82B8FAA627797E2F00DDACCC /* ForwardRenderPass.swift in Sources */,
+				23C6123328189F6200CA4274 /* ICB.metal in Sources */,
 				822756E027C227DC00660C7E /* IndirectRenderPass.swift in Sources */,
 				820B882E26B8E5290070A134 /* VertexDescriptor.swift in Sources */,
 				820B882B26B8E51B0070A134 /* Model.swift in Sources */,

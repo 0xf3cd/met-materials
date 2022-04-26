@@ -41,11 +41,21 @@ struct IndirectRenderPass: RenderPass {
   var uniformsBuffer: MTLBuffer!
   var modelParamsBuffer: MTLBuffer!
   
+  let icbPipelineState: MTLComputePipelineState
+  let icbComputeFunction: MTLFunction
+  
   var icb: MTLIndirectCommandBuffer!
+  
+  var icbBuffer: MTLBuffer!
+  var modelsBuffer: MTLBuffer!
+  
+  var drawArgumentsBuffer: MTLBuffer!
 
   init() {
     pipelineState = PipelineStates.createIndirectPSO()
     depthStencilState = Self.buildDepthStencilState()
+    icbComputeFunction = Renderer.library.makeFunction(name: "encodeCommands")!
+    icbPipelineState = PipelineStates.createComputePSO(function: "encodeCommands")
   }
     
   mutating func initializeUniforms(_ models: [Model]) -> Void {
@@ -83,7 +93,7 @@ struct IndirectRenderPass: RenderPass {
     else { fatalError("Failed to create ICB") }
     self.icb = icb
     
-    for (modelIndex, model) in models.enumerated() {
+    /* for (modelIndex, model) in models.enumerated() {
       let mesh = model.meshes[0]
       let submesh = mesh.submeshes[0]
       let icbCommand = icb.indirectRenderCommandAt(modelIndex)
@@ -121,12 +131,72 @@ struct IndirectRenderPass: RenderPass {
         instanceCount: 1,
         baseVertex: 0,
         baseInstance: modelIndex)
+    } */
+    
+    let icbEncoder = icbComputeFunction.makeArgumentEncoder(bufferIndex: ICBBuffer.index)
+    icbBuffer = Renderer.device.makeBuffer(
+      length: icbEncoder.encodedLength,
+      options: [])
+    icbEncoder.setArgumentBuffer(icbBuffer, offset: 0)
+    icbEncoder.setIndirectCommandBuffer(icb, index: 0)
+  }
+  
+  mutating func initializeModels(_ models: [Model]) {
+    let encoder = icbComputeFunction.makeArgumentEncoder(bufferIndex: ModelsBuffer.index)
+    modelsBuffer = Renderer.device.makeBuffer(
+      length: encoder.encodedLength * models.count,
+      options: [])
+    for (index, model) in models.enumerated() {
+      let mesh = model.meshes[0]
+      let submesh = mesh.submeshes[0]
+      encoder.setArgumentBuffer(
+        modelsBuffer,
+        startOffset: 0,
+        arrayElement: index)
+      encoder.setBuffer(
+        mesh.vertexBuffers[VertexBuffer.index],
+        offset: 0,
+        index: 0)
+      encoder.setBuffer(
+        mesh.vertexBuffers[UVBuffer.index],
+        offset: 0,
+        index: 1)
+      encoder.setBuffer(
+        submesh.indexBuffer,
+        offset: submesh.indexBufferOffset,
+        index: 2)
+      encoder.setBuffer(
+        submesh.argumentBuffer!,
+        offset: 0,
+        index: 3)
+    }
+  }
+  
+  mutating func initializeDrawArguments(models: [Model]) {
+    let drawLength = models.count * MemoryLayout<MTLDrawIndexedPrimitivesIndirectArguments>.stride
+    drawArgumentsBuffer = Renderer.device.makeBuffer(length: drawLength, options: [])
+    drawArgumentsBuffer.label = "Draw Arguments"
+    var drawPointer = drawArgumentsBuffer.contents().bindMemory(to: MTLDrawIndexedPrimitivesIndirectArguments.self, capacity: models.count)
+    
+    for (modelIndex, model) in models.enumerated() {
+      let mesh = model.meshes[0]
+      let submesh = mesh.submeshes[0]
+      var drawArgument = MTLDrawIndexedPrimitivesIndirectArguments()
+      drawArgument.indexCount = UInt32(submesh.indexCount)
+      drawArgument.indexStart = UInt32(submesh.indexBufferOffset)
+      drawArgument.instanceCount = 1
+      drawArgument.baseVertex = 0
+      drawArgument.baseInstance = UInt32(modelIndex)
+      drawPointer.pointee = drawArgument
+      drawPointer = drawPointer.advanced(by: 1)
     }
   }
   
   mutating func initialize(models: [Model]) {
     initializeUniforms(models)
     initializeICBCommands(models)
+    initializeModels(models)
+    initializeDrawArguments(models: models)
   }
   
   func updateUniforms(scene: GameScene, uniforms: Uniforms) {
@@ -134,11 +204,26 @@ struct IndirectRenderPass: RenderPass {
     uniformsBuffer.contents().copyMemory(from: &uniforms, byteCount: MemoryLayout<Uniforms>.stride)
   }
   
+  func encodeDraw(encoder: MTLComputeCommandEncoder) {
+    encoder.setComputePipelineState(icbPipelineState)
+    encoder.setBuffer(
+      icbBuffer, offset: 0, index: ICBBuffer.index)
+    encoder.setBuffer(
+      uniformsBuffer, offset: 0, index: UniformsBuffer.index)
+    encoder.setBuffer(
+      modelsBuffer, offset: 0, index: ModelsBuffer.index)
+    encoder.setBuffer(
+      modelParamsBuffer, offset: 0, index: ModelParamsBuffer.index)
+    encoder.setBuffer(
+      drawArgumentsBuffer, offset: 0, index: DrawArgumentsBuffer.index)
+  }
+  
   func useResources(
-    encoder: MTLRenderCommandEncoder,
+    encoder: MTLComputeCommandEncoder,
     models: [Model]
   ) {
     encoder.pushDebugGroup("Using resources")
+    encoder.useResource(icb, usage: .write)
     encoder.useResource(uniformsBuffer, usage: .read)
     encoder.useResource(modelParamsBuffer, usage: .read)
     if let heap = TextureController.heap {
@@ -154,6 +239,16 @@ struct IndirectRenderPass: RenderPass {
     }
     encoder.popDebugGroup()
   }
+  
+  func dispatchThreads(
+    encoder: MTLComputeCommandEncoder,
+    drawCount: Int
+  ) {
+    let threadExecutionWidth = icbPipelineState.threadExecutionWidth
+    let threads = MTLSize(width: drawCount, height: 1, depth: 1)
+    let threadsPerThreadgroup = MTLSize(width: threadExecutionWidth, height: 1, depth: 1)
+    encoder.dispatchThreads(threads, threadsPerThreadgroup: threadsPerThreadgroup)
+  }
 
   mutating func resize(view: MTKView, size: CGSize) {
   }
@@ -166,6 +261,14 @@ struct IndirectRenderPass: RenderPass {
   ) {
     updateUniforms(scene: scene, uniforms: uniforms)
     
+    guard let computeEncoder = commandBuffer.makeComputeCommandEncoder()
+    else { return }
+    encodeDraw(encoder: computeEncoder)
+    useResources(encoder: computeEncoder, models: scene.models)
+    dispatchThreads(
+      encoder: computeEncoder, drawCount: scene.models.count)
+    computeEncoder.endEncoding()
+    
     guard let descriptor = descriptor,
       let renderEncoder =
       commandBuffer.makeRenderCommandEncoder(
@@ -175,8 +278,6 @@ struct IndirectRenderPass: RenderPass {
     renderEncoder.label = label
     renderEncoder.setDepthStencilState(depthStencilState)
     renderEncoder.setRenderPipelineState(pipelineState)
-    
-    useResources(encoder: renderEncoder, models: scene.models)
     
     renderEncoder.executeCommandsInBuffer(icb, range: 0..<scene.models.count)
 
